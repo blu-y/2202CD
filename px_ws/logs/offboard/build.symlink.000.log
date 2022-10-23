@@ -1,0 +1,4 @@
+Symlinking /home/alien/2202CD/px_ws/devel/lib/offboard/offb_node
+Symlinking /home/alien/2202CD/px_ws/devel/lib/pkgconfig/offboard.pc
+Symlinking /home/alien/2202CD/px_ws/devel/share/offboard/cmake/offboardConfig.cmake
+Symlinking /home/alien/2202CD/px_ws/devel/share/offboard/cmake/offboardConfig-version.cmake

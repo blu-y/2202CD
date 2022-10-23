@@ -1,0 +1,1 @@
+/home/alien/2202CD/px_ws/devel/.private/libmavconn/share/libmavconn/cmake/libmavconnConfig.cmake

@@ -1,0 +1,5 @@
+Symlinking /home/alien/2202CD/px_ws/devel/lib/libmavconn.so
+Symlinking /home/alien/2202CD/px_ws/devel/lib/pkgconfig/libmavconn.pc
+Symlinking /home/alien/2202CD/px_ws/devel/share/libmavconn/cmake/libmavconn-extras.cmake
+Symlinking /home/alien/2202CD/px_ws/devel/share/libmavconn/cmake/libmavconnConfig.cmake
+Symlinking /home/alien/2202CD/px_ws/devel/share/libmavconn/cmake/libmavconnConfig-version.cmake
