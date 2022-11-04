@@ -23,7 +23,7 @@ def state_cb(msg):
     global current_state
     current_state = msg
 
-def xyz_cb(msg):
+def cp_cb(msg):
     global x, y, z
     x = msg.x
     y = msg.y
@@ -34,10 +34,10 @@ def cxyz_cb(msg):
     cpose = msg
 
 if __name__ == "__main__":
-    rospy.init_node("offb_node")
+    rospy.init_node("pp_control")
     state_sub = rospy.Subscriber("mavros/state", State, callback = state_cb)
-    xyz_sub = rospy.Subscriber("/xyz_pos", xyz, callback = xyz_cb)
-    arrived_pub = rospy.Publisher("/xyz_arr", Bool, queue_size=1)
+    cp_sub = rospy.Subscriber("/pp/checkpoint", xyz, callback = cp_cb)
+    arrived_pub = rospy.Publisher("/pp/cp_arr", Bool, queue_size=1)
     local_pos_pub = rospy.Publisher("mavros/setpoint_position/local", PoseStamped, queue_size=10)
     local_pos_sub = rospy.Subscriber("/mavros/local_position/pose", PoseStamped, cxyz_cb)
     rospy.wait_for_service("/mavros/cmd/arming")
@@ -96,9 +96,9 @@ if __name__ == "__main__":
             arrived_pub.publish(True)
         rate.sleep()
 
-# rostopic pub /xyz_pos mavros_msgs/xyz "{x: 1, y: 1, z: 1}"
-# rostopic echo /xyz_arr
-# rostopic pub /xyz_arr std_msgs/Bool "data: true"
+# rostopic pub /pp/checkpoint mavros_msgs/xyz "{x: 5, y: 5, z: 2}"
+# rostopic echo /pp/cp_arr
+# rostopic pub /pp/cp_arr std_msgs/Bool "data: true"
 
 
 
