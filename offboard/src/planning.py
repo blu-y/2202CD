@@ -17,7 +17,8 @@ def main():
     rospy.init_node("pp_planning")
     
     cp_pub = rospy.Publisher("/pp/checkpoint", xyz, queue_size=1)
-    arrived_pub = rospy.Subscriber("/pp/cp_arr", Bool, callback = arrived_cb)
+    arr_pub = rospy.Publisher("/pp/arr", Bool, queue_size=1)
+    arrived_sub = rospy.Subscriber("/pp/cp_arr", Bool, callback = arrived_cb)
     s_start = (5, 5)
     s_goal = (45, 25)
 
@@ -39,6 +40,8 @@ def main():
             if goal_arr:
                 print("goal arrived")
                 goal_arr = 0
+                arr_pub.publish(True)
+                break
         rate.sleep()
     #plot.animation(path, visited, "A*")  # animation
 

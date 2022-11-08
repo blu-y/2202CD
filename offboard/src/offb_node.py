@@ -18,6 +18,11 @@ cpose = PoseStamped()
 x = 0
 y = 0
 z = 2
+arr = 0
+
+def arrived_cb(msg):
+    global arr
+    if msg: arr = 1
 
 def state_cb(msg):
     global current_state
@@ -38,6 +43,7 @@ if __name__ == "__main__":
     state_sub = rospy.Subscriber("mavros/state", State, callback = state_cb)
     cp_sub = rospy.Subscriber("/pp/checkpoint", xyz, callback = cp_cb)
     arrived_pub = rospy.Publisher("/pp/cp_arr", Bool, queue_size=1)
+    final_arr_sub = rospy.Subscriber("/pp/arr", Bool, callback = arrived_cb)
     local_pos_pub = rospy.Publisher("mavros/setpoint_position/local", PoseStamped, queue_size=10)
     local_pos_sub = rospy.Subscriber("/mavros/local_position/pose", PoseStamped, cxyz_cb)
     rospy.wait_for_service("/mavros/cmd/arming")
@@ -92,9 +98,10 @@ if __name__ == "__main__":
         z0 = cpose.pose.position.z
         dist = (x-x0)**2+(y-y0)**2+(z-z0)**2
         if dist<0.01 : 
-            time.sleep(1)
+            time.sleep(0.5)
             arrived_pub.publish(True)
         rate.sleep()
+        if arr: break
 
 # rostopic pub /pp/checkpoint mavros_msgs/xyz "{x: 5, y: 5, z: 2}"
 # rostopic echo /pp/cp_arr
