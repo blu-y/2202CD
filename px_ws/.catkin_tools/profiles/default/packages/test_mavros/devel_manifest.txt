@@ -1,7 +1,0 @@
-mavros/test_mavros
-/home/alien/2202CD/px_ws/devel/.private/test_mavros/cmake.lock /home/alien/2202CD/px_ws/devel/./cmake.lock
-/home/alien/2202CD/px_ws/devel/.private/test_mavros/lib/libmavros_sitl_test.so /home/alien/2202CD/px_ws/devel/lib/libmavros_sitl_test.so
-/home/alien/2202CD/px_ws/devel/.private/test_mavros/lib/pkgconfig/test_mavros.pc /home/alien/2202CD/px_ws/devel/lib/pkgconfig/test_mavros.pc
-/home/alien/2202CD/px_ws/devel/.private/test_mavros/lib/test_mavros/sitl_test_node /home/alien/2202CD/px_ws/devel/lib/test_mavros/sitl_test_node
-/home/alien/2202CD/px_ws/devel/.private/test_mavros/share/test_mavros/cmake/test_mavrosConfig-version.cmake /home/alien/2202CD/px_ws/devel/share/test_mavros/cmake/test_mavrosConfig-version.cmake
-/home/alien/2202CD/px_ws/devel/.private/test_mavros/share/test_mavros/cmake/test_mavrosConfig.cmake /home/alien/2202CD/px_ws/devel/share/test_mavros/cmake/test_mavrosConfig.cmake

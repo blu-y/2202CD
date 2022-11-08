@@ -1,2 +1,0 @@
-/home/alien/px_ws/devel/./cmake.lock 25
-/home/alien/2202CD/px_ws/devel/./cmake.lock 6
