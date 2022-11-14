@@ -7,7 +7,7 @@
 
 import rospy
 import time
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, Twist
 from mavros_msgs.msg import State, xyz
 from mavros_msgs.srv import CommandBool, CommandBoolRequest, SetMode, SetModeRequest
 from std_msgs.msg import Bool
@@ -83,9 +83,9 @@ if __name__ == "__main__":
                     rospy.loginfo("Vehicle armed")
                 last_req = rospy.Time.now()
                 start = time.time()
-        pose.pose.position.x = x
-        pose.pose.position.y = y
-        pose.pose.position.z = z
+        pose.pose.position.x = 5
+        pose.pose.position.y = 5
+        pose.pose.position.z = 2
         local_pos_pub.publish(pose)
         x0 = cpose.pose.position.x
         y0 = cpose.pose.position.y
@@ -95,7 +95,7 @@ if __name__ == "__main__":
         traj[2].append(z0)
         traj[3].append(time.time()-start)
         dist = (x-x0)**2+(y-y0)**2+(z-z0)**2
-        if time.time()-start > 60: break
+        if time.time()-start > 30: break
         rate.sleep()
     plt.plot(traj[3], traj[0], label='x')
     plt.plot(traj[3], traj[1], label='y')

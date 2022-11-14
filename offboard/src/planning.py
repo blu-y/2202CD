@@ -15,6 +15,7 @@ s_goal = (45, 25)
 
 def add_obs_cb(msg):
     global state, path, s_start, s_goal
+    # 경로상에 obs가 있는지 확인하는 부분
     rospy.loginfo("Obstacle added ("+str(msg.x)+", "+str(msg.y))
     astar = AStar(s_start, s_goal)
     astar.obs.add((msg.ox, msg.oy))
