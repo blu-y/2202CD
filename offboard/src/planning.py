@@ -32,7 +32,6 @@ def main():
 
     astar = AStar(s_start, s_goal)
     #plot = plotting.Plotting(s_start, s_goal)
-
     path, visited = astar.searching()
     print(path)
     rate = rospy.Rate(20)
