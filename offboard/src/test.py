@@ -11,6 +11,7 @@ from geometry_msgs.msg import PoseStamped
 from mavros_msgs.msg import State, xyz
 from mavros_msgs.srv import CommandBool, CommandBoolRequest, SetMode, SetModeRequest
 from std_msgs.msg import Bool
+import matplotlib.pyplot as plt
 
 current_state = State()
 cpose = PoseStamped()
@@ -18,6 +19,7 @@ x = 0
 y = 0
 z = 2
 arr = 0
+traj = [[],[],[]]
 
 def arrived_cb(msg):
     global arr
@@ -49,33 +51,25 @@ if __name__ == "__main__":
     arming_client = rospy.ServiceProxy("mavros/cmd/arming", CommandBool)    
     rospy.wait_for_service("/mavros/set_mode")
     set_mode_client = rospy.ServiceProxy("mavros/set_mode", SetMode)
-
     # Setpoint publishing MUST be faster than 2Hz
     rate = rospy.Rate(20)
-
     # Wait for Flight Controller connection
     while(not rospy.is_shutdown() and not current_state.connected):
         rate.sleep()
-
     pose = PoseStamped()
     pose.pose.position.x = x
     pose.pose.position.y = y
     pose.pose.position.z = z
-
     # Send a few setpoints before starting
     for i in range(100):   
         if(rospy.is_shutdown()):
             break
-
         local_pos_pub.publish(pose)
         rate.sleep()
-
     offb_set_mode = SetModeRequest()
     offb_set_mode.custom_mode = 'OFFBOARD'
-
     arm_cmd = CommandBoolRequest()
     arm_cmd.value = True
-
     last_req = rospy.Time.now()
 
     while(not rospy.is_shutdown()):
@@ -88,6 +82,7 @@ if __name__ == "__main__":
                 if(arming_client.call(arm_cmd).success == True):
                     rospy.loginfo("Vehicle armed")
                 last_req = rospy.Time.now()
+                start = time.time()
         pose.pose.position.x = x
         pose.pose.position.y = y
         pose.pose.position.z = z
@@ -95,12 +90,16 @@ if __name__ == "__main__":
         x0 = cpose.pose.position.x
         y0 = cpose.pose.position.y
         z0 = cpose.pose.position.z
+        traj[0].append(x0)
+        traj[1].append(y0)
+        traj[2].append(z0)
+        traj[3].append(time.time()-start)
         dist = (x-x0)**2+(y-y0)**2+(z-z0)**2
-        if dist<0.01 : 
-            time.sleep(0.5)
-            arrived_pub.publish(True)
+        if time.time()-start > 60: break
         rate.sleep()
-        if arr: break
+    plt.plot(traj[3], traj[0], label='x')
+    plt.plot(traj[3], traj[1], label='y')
+    plt.show()
 
 # rostopic pub /pp/checkpoint mavros_msgs/xyz "{x: 5, y: 5, z: 2}"
 # rostopic echo /pp/cp_arr

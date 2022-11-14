@@ -9,18 +9,26 @@ def arrived_cb(msg):
     if msg: state = 1
 
 state = 0
+path = []
+s_start = (1, 1)
+s_goal = (45, 25)
+
+def add_obs_cb(msg):
+    global state, path, s_start, s_goal
+    rospy.loginfo("Obstacle added ("+str(msg.x)+", "+str(msg.y))
+    astar = AStar(s_start, s_goal)
+    astar.obs.add((msg.ox, msg.oy))
+    path, visited = astar.searching()
 
 def main():
-    global state
+    global state, path, s_start, s_goal
     goal_arr = 1
     z = 2
     rospy.init_node("pp_planning")
-    
     cp_pub = rospy.Publisher("/pp/checkpoint", xyz, queue_size=1)
     arr_pub = rospy.Publisher("/pp/arr", Bool, queue_size=1)
     arrived_sub = rospy.Subscriber("/pp/cp_arr", Bool, callback = arrived_cb)
-    s_start = (5, 5)
-    s_goal = (45, 25)
+    add_obs_sub = rospy.Subscriber("/pp/obs", xyz, callback = add_obs_cb)
 
     astar = AStar(s_start, s_goal)
     #plot = plotting.Plotting(s_start, s_goal)
