@@ -8,14 +8,22 @@
 
 import rospy
 import time
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, TwistStamped
 from mavros_msgs.msg import State, xyz
 from mavros_msgs.srv import CommandBool, CommandBoolRequest, SetMode, SetModeRequest
 from std_msgs.msg import Bool
 import matplotlib.pyplot as plt
+import numpy as np
+
+p = 3
+d = 1000
+ex = [0]
+ey = [0]
+ez = [2]
 
 current_state = State()
 cpose = PoseStamped()
+twist = TwistStamped()
 x = 0
 y = 0
 z = 2
@@ -39,6 +47,7 @@ if __name__ == "__main__":
     state_sub = rospy.Subscriber("mavros/state", State, callback = state_cb)
     cp_sub = rospy.Subscriber("/pp/checkpoint", xyz, callback = cp_cb)
     arrived_pub = rospy.Publisher("/pp/cp_arr", Bool, queue_size=1)
+    vel_pub = rospy.Publisher("mavros/setpoint_velocity/cmd_vel", TwistStamped, queue_size=1)
     local_pos_pub = rospy.Publisher("mavros/setpoint_position/local", PoseStamped, queue_size=10)
     local_pos_sub = rospy.Subscriber("/mavros/local_position/pose", PoseStamped, cxyz_cb)
     rospy.wait_for_service("/mavros/cmd/arming")
@@ -87,9 +96,9 @@ if __name__ == "__main__":
                 last_req = rospy.Time.now()
                 start = time.time()
                 traj = [[],[],[],[]]
-        pose.pose.position.x = x
-        pose.pose.position.y = y
-        pose.pose.position.z = z
+        pose.pose.position.x = 0
+        pose.pose.position.y = 0
+        pose.pose.position.z = 2
         local_pos_pub.publish(pose)
         x0 = cpose.pose.position.x
         y0 = cpose.pose.position.y
@@ -99,7 +108,31 @@ if __name__ == "__main__":
         traj[2].append(z0)
         traj[3].append(time.time()-start)
         dist = (x-x0)**2+(y-y0)**2+(z-z0)**2
-        if dist<0.01 : 
+        if dist < 0.1:
+            arrived_pub.publish(True)
+            break
+        rate.sleep()
+    start = time.time()
+    traj = [[],[],[],[]]
+    while(not rospy.is_shutdown()):
+        ex.append(x-x0)
+        ey.append(y-y0)
+        ez.append(z-z0)
+        twist.twist.linear.x = p*ex[-1]+d*0.05*(ex[-1]-ex[-2])
+        twist.twist.linear.y = p*ey[-1]+d*0.05*(ey[-1]-ey[-2])
+        twist.twist.linear.z = p/2*ez[-1]+d/5*0.05*(ez[-1]-ez[-2])
+        #print(twist.twist.linear.x, twist.twist.linear.y)
+        #local_pos_pub.publish(pose)
+        vel_pub.publish(twist)
+        x0 = cpose.pose.position.x
+        y0 = cpose.pose.position.y
+        z0 = cpose.pose.position.z
+        traj[0].append(x0)
+        traj[1].append(y0)
+        traj[2].append(z0)
+        traj[3].append(time.time()-start)
+        dist = np.sqrt(ex[-1]**2+ey[-1]**2)
+        if dist<0.1 : 
             arrived_pub.publish(True)
         rate.sleep()
         if time.time()-start > 180: break

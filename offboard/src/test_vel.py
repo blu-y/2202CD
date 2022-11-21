@@ -113,11 +113,13 @@ if __name__ == "__main__":
     d = 1000
     ex = [0]
     ey = [0]
+    ez = [0]
     while(not rospy.is_shutdown()):
         ex.append(x-x0)
         ey.append(y-y0)
+        ez.append(z-z0)
         twist.twist.linear.x = p*ex[-1]+d*0.05*(ex[-1]-ex[-2])
-        twist.twist.linear.y = p*ey[-1]+d*0.05*(ex[-1]-ex[-2])
+        twist.twist.linear.y = p*ey[-1]+d*0.05*(ey[-1]-ey[-2])
         print(twist.twist.linear.x, twist.twist.linear.y)
         vel_pub.publish(twist)
         x0 = cpose.pose.position.x
@@ -127,7 +129,7 @@ if __name__ == "__main__":
         traj[1].append(y0)
         traj[2].append(z0)
         traj[3].append(time.time()-start)
-        dist = (x-x0)**2+(y-y0)**2+(z-z0)**2
+        dist = ex[-1]**2+ey[-1]**2+ez[-1]**2
         if time.time()-start > 15: break
         rate.sleep()
     plt.plot(traj[3], traj[0], label='x')
