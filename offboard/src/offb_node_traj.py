@@ -100,10 +100,10 @@ if __name__ == "__main__":
         traj[3].append(time.time()-start)
         dist = (x-x0)**2+(y-y0)**2+(z-z0)**2
         if dist<0.01 : 
-            time.sleep(1)
+            time.sleep(0.1)
             arrived_pub.publish(True)
         rate.sleep()
-        if time.time()-start > 60: break
+        if time.time()-start > 240: break
     plt.plot(traj[3], traj[0], label='x')
     plt.plot(traj[3], traj[1], label='y')
     plt.legend()

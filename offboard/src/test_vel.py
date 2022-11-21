@@ -107,12 +107,17 @@ if __name__ == "__main__":
         rate.sleep()
     start = time.time()
     traj = [[],[],[],[]]
-    x = 20
-    y = 20
-    p = 0.5
+    x = 1
+    y = 1
+    p = 3
+    d = 1000
+    ex = [0]
+    ey = [0]
     while(not rospy.is_shutdown()):
-        twist.twist.linear.x = p*(x-x0)
-        twist.twist.linear.y = p*(y-y0)
+        ex.append(x-x0)
+        ey.append(y-y0)
+        twist.twist.linear.x = p*ex[-1]+d*0.05*(ex[-1]-ex[-2])
+        twist.twist.linear.y = p*ey[-1]+d*0.05*(ex[-1]-ex[-2])
         print(twist.twist.linear.x, twist.twist.linear.y)
         vel_pub.publish(twist)
         x0 = cpose.pose.position.x
