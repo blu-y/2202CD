@@ -205,7 +205,7 @@ class AStar:
 
 
 def main():
-    s_start = (5, 5)
+    s_start = (1, 1)
     s_goal = (45, 25)
 
     astar = AStar(s_start, s_goal, "euclidean")

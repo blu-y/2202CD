@@ -51,7 +51,7 @@ if __name__ == "__main__":
     arrived_pub = rospy.Publisher("/pp/cp_arr", Bool, queue_size=1)
     final_arr_sub = rospy.Subscriber("/pp/arr", Bool, callback = arrived_cb)
     local_pos_pub = rospy.Publisher("mavros/setpoint_position/local", PoseStamped, queue_size=10)
-    vel_pub = rospy.Pusblisher("mavros/setpoint_velocity/cmd_vel", TwistStamped)
+    vel_pub = rospy.Publisher("mavros/setpoint_velocity/cmd_vel", TwistStamped, queue_size=1)
     local_pos_sub = rospy.Subscriber("/mavros/local_position/pose", PoseStamped, cxyz_cb)
     rospy.wait_for_service("/mavros/cmd/arming")
     arming_client = rospy.ServiceProxy("mavros/cmd/arming", CommandBool)    
@@ -63,6 +63,7 @@ if __name__ == "__main__":
     while(not rospy.is_shutdown() and not current_state.connected):
         rate.sleep()
     pose = PoseStamped()
+    twist = TwistStamped()
     pose.pose.position.x = x
     pose.pose.position.y = y
     pose.pose.position.z = z
@@ -106,11 +107,14 @@ if __name__ == "__main__":
         rate.sleep()
     start = time.time()
     traj = [[],[],[],[]]
+    x = 20
+    y = 20
+    p = 0.5
     while(not rospy.is_shutdown()):
-        pose.pose.position.x = 20*xs[s]
-        pose.pose.position.y = 20*ys[s]
-        pose.pose.position.z = 2
-        local_pos_pub.publish(pose)
+        twist.twist.linear.x = p*(x-x0)
+        twist.twist.linear.y = p*(y-y0)
+        print(twist.twist.linear.x, twist.twist.linear.y)
+        vel_pub.publish(twist)
         x0 = cpose.pose.position.x
         y0 = cpose.pose.position.y
         z0 = cpose.pose.position.z
@@ -119,8 +123,7 @@ if __name__ == "__main__":
         traj[2].append(z0)
         traj[3].append(time.time()-start)
         dist = (x-x0)**2+(y-y0)**2+(z-z0)**2
-        if s >= 9: break
-        s += 1
+        if time.time()-start > 15: break
         rate.sleep()
     plt.plot(traj[3], traj[0], label='x')
     plt.plot(traj[3], traj[1], label='y')
