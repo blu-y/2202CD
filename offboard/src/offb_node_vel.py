@@ -135,7 +135,7 @@ if __name__ == "__main__":
         if dist<0.1 : 
             arrived_pub.publish(True)
         rate.sleep()
-        if time.time()-start > 180: break
+        if time.time()-start > 60: break
     plt.plot(traj[3], traj[0], label='x')
     plt.plot(traj[3], traj[1], label='y')
     plt.legend()
