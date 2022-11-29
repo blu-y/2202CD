@@ -4,7 +4,7 @@ Plot tools 2D
 """
 
 import matplotlib.pyplot as plt
-import env_ as env
+import env2 as env
 
 class Plotting:
     def __init__(self, xI, xG):

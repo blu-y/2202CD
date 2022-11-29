@@ -5,8 +5,8 @@ A_star 2D
 
 import math
 import heapq
-import env3 as env
-#import plotting
+import env2 as env
+import plotting
 import rospy
 from mavros_msgs.msg import xyz
 from std_msgs.msg import Bool
@@ -209,11 +209,11 @@ def main():
     s_goal = (45, 25)
 
     astar = AStar(s_start, s_goal, "euclidean")
-    #plot = plotting.Plotting(s_start, s_goal)
+    plot = plotting.Plotting(s_start, s_goal)
 
     path, visited = astar.searching()
     print(path)
-    #plot.animation(path, visited, "A*")  # animation
+    plot.animation(path, visited, "A*")  # animation
 
     # path, visited = astar.searching_repeated_astar(2.5)               # initial weight e = 2.5
     # plot.animation_ara_star(path, visited, "Repeated A*")

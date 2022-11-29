@@ -1,4 +1,4 @@
-from Astar import *
+from Dstar import *
 import rospy
 from mavros_msgs.msg import xyz
 from std_msgs.msg import Bool
@@ -15,18 +15,15 @@ s_goal = (45, 25)
 x0, y0 = (-1, -1)
 
 def add_obs_cb(msg):
-    global state, path, s_start, s_goal, astar
-    rospy.loginfo("Obstacle added ("+str(msg.x)+", "+str(msg.y))
-    if (msg.x, msg.y) in path:
-        astar = AStar(s_start, s_goal)
-        astar.obs.add((msg.x, msg.y))
-        path, visited = astar.searching()
-        path = simplepath(path)
-        print('new path : ',path)
-    else: astar.obs.add((msg.x, msg.y))
+    global state, path, s_start, s_goal, dstar
+    rospy.loginfo("Obstacle added ("+str(msg.x)+", "+str(msg.y)+")")
+    dstar.on_press(msg.x, msg.y)
+    path = dstar.path
+    path = simplepath(path)
+    print('new path : ',path)
 
 def simplepath(path):
-    l = len(path)
+    l = len(path)   
     od = 0
     dpath = [(0, 0)]
     for i in range(l-1):
@@ -36,25 +33,28 @@ def simplepath(path):
     return path
 
 def main():
-    global state, path, s_start, s_goal
+    global state, path, s_start, s_goal, dstar
     goal_arr = 1
     z = 2
+    i = 3
     rospy.init_node("pp_planning")
     cp_pub = rospy.Publisher("/pp/checkpoint", xyz, queue_size=1)
     arr_pub = rospy.Publisher("/pp/arr", Bool, queue_size=1)
     arrived_sub = rospy.Subscriber("/pp/cp_arr", Bool, callback = arrived_cb)
     add_obs_sub = rospy.Subscriber("/pp/obs", xyz, callback = add_obs_cb)
 
-    astar = AStar(s_start, s_goal)
+    dstar = DStar(s_start, s_goal)
     #plot = plotting.Plotting(s_start, s_goal)
-    path, visited = astar.searching()
+    dstar.run(s_start, s_goal)
+    path = dstar.path
     path = simplepath(path)
     print(path)
     rate = rospy.Rate(20)
     while(not rospy.is_shutdown()):
         try:
             if state:
-                x, y = path.pop()
+                x, y = path[i]
+                i = i+1
                 if (x, y) != (x0, y0):
                     print(x, y)
                     cp_pub.publish(x=x, y=y, z=z)

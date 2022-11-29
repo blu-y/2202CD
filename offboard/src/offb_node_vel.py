@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 p = 3
-d = 1000
+d = 700
 ex = [0]
 ey = [0]
 ez = [2]
