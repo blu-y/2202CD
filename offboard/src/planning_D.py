@@ -10,17 +10,19 @@ def arrived_cb(msg):
 
 state = 0
 path = []
+i = 0
 s_start = (1, 1)
 s_goal = (45, 25)
 x0, y0 = (-1, -1)
 
 def add_obs_cb(msg):
-    global state, path, s_start, s_goal, dstar
+    global state, path, s_start, s_goal, dstar, i
     rospy.loginfo("Obstacle added ("+str(msg.x)+", "+str(msg.y)+")")
     dstar.on_press(msg.x, msg.y)
     path = dstar.path
     path = simplepath(path)
-    print('new path : ',path)
+    print('new path >>')
+    print(path[i:])
 
 def simplepath(path):
     l = len(path)   
@@ -33,10 +35,9 @@ def simplepath(path):
     return path
 
 def main():
-    global state, path, s_start, s_goal, dstar
+    global state, path, s_start, s_goal, dstar, i
     goal_arr = 1
     z = 2
-    i = 3
     rospy.init_node("pp_planning")
     cp_pub = rospy.Publisher("/pp/checkpoint", xyz, queue_size=1)
     arr_pub = rospy.Publisher("/pp/arr", Bool, queue_size=1)
